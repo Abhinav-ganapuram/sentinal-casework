@@ -1,0 +1,17 @@
+{
+  "case_id": "CASE-001",
+  "title": "MFA fatigue followed by privilege escalation",
+  "subject": "mira.patel@example.test",
+  "label": "suspicious",
+  "scenario": "Fictional identity events for a replayable SOC investigation.",
+  "events": [
+    {"id": "E001", "timestamp": "2026-09-20T09:00:00Z", "source": "identity", "action": "login", "outcome": "success", "user": "mira.patel@example.test", "details": {"ip": "198.51.100.24", "location": "Hyderabad", "device": "managed-laptop"}},
+    {"id": "E002", "timestamp": "2026-09-20T09:04:00Z", "source": "identity", "action": "login", "outcome": "password_accepted", "user": "mira.patel@example.test", "details": {"ip": "203.0.113.57", "location": "Unknown", "device": "new-browser"}},
+    {"id": "E003", "timestamp": "2026-09-20T09:04:20Z", "source": "identity", "action": "mfa_push", "outcome": "denied", "user": "mira.patel@example.test", "details": {"ip": "203.0.113.57", "device": "new-browser"}},
+    {"id": "E004", "timestamp": "2026-09-20T09:04:38Z", "source": "identity", "action": "mfa_push", "outcome": "denied", "user": "mira.patel@example.test", "details": {"ip": "203.0.113.57", "device": "new-browser"}},
+    {"id": "E005", "timestamp": "2026-09-20T09:04:56Z", "source": "identity", "action": "mfa_push", "outcome": "denied", "user": "mira.patel@example.test", "details": {"ip": "203.0.113.57", "device": "new-browser"}},
+    {"id": "E006", "timestamp": "2026-09-20T09:05:12Z", "source": "identity", "action": "mfa_push", "outcome": "approved", "user": "mira.patel@example.test", "details": {"ip": "203.0.113.57", "device": "new-browser"}},
+    {"id": "E007", "timestamp": "2026-09-20T09:05:14Z", "source": "identity", "action": "login", "outcome": "success", "user": "mira.patel@example.test", "details": {"ip": "203.0.113.57", "location": "Unknown", "device": "new-browser"}},
+    {"id": "E008", "timestamp": "2026-09-20T09:09:00Z", "source": "audit", "action": "role_granted", "outcome": "success", "user": "mira.patel@example.test", "details": {"role": "SecurityAdministrator", "ip": "203.0.113.57", "target": "mira.patel@example.test"}}
+  ]
+}
