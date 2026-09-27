@@ -28,6 +28,5 @@ def load_case(path: Path = CASE_PATH) -> dict:
         if timestamp.tzinfo is None:
             raise ValueError(f"Timestamp needs a timezone: {event['id']}")
 
-    case["events"].sort(key=lambda event: event["timestamp"])
+    case["events"].sort(key=lambda event: datetime.fromisoformat(event["timestamp"].replace("Z", "+00:00")))
     return case
-

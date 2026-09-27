@@ -1,0 +1,14 @@
+{
+  "case_id": "CASE-002",
+  "title": "MFA prompts denied during an ordinary login retry",
+  "subject": "arun.shah@example.test",
+  "label": "benign",
+  "scenario": "Fictional prompts were denied, but no approval or privilege change followed.",
+  "events": [
+    {"id": "B001", "timestamp": "2026-09-20T10:00:00Z", "source": "identity", "action": "login", "outcome": "password_accepted", "user": "arun.shah@example.test", "details": {"ip": "198.51.100.80", "location": "Hyderabad", "device": "managed-laptop"}},
+    {"id": "B002", "timestamp": "2026-09-20T10:00:10Z", "source": "identity", "action": "mfa_push", "outcome": "denied", "user": "arun.shah@example.test", "details": {"ip": "198.51.100.80", "device": "managed-laptop"}},
+    {"id": "B003", "timestamp": "2026-09-20T10:00:30Z", "source": "identity", "action": "mfa_push", "outcome": "denied", "user": "arun.shah@example.test", "details": {"ip": "198.51.100.80", "device": "managed-laptop"}},
+    {"id": "B004", "timestamp": "2026-09-20T10:00:50Z", "source": "identity", "action": "mfa_push", "outcome": "denied", "user": "arun.shah@example.test", "details": {"ip": "198.51.100.80", "device": "managed-laptop"}},
+    {"id": "B005", "timestamp": "2026-09-20T10:02:00Z", "source": "identity", "action": "login", "outcome": "failed", "user": "arun.shah@example.test", "details": {"ip": "198.51.100.80", "location": "Hyderabad", "device": "managed-laptop"}}
+  ]
+}

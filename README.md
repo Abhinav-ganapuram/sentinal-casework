@@ -1,34 +1,40 @@
 # Sentinel Casework
 
 An evidence-first, agent-assisted SOC investigation console. This repository is
-built in small working steps. The first step is a replayable, synthetic identity
-security case that runs with Python's standard library and requires no VM.
+built in small working steps. It now has two replayable identity cases and an
+evidence-backed detection rule. It runs with Python's standard library and no VM.
 
-## Step 1: replay an incident
+## Replay the cases
 
 Requirements: Python 3.10 or newer.
 
 ```bash
 python -m sentinel_casework.cli
+python -m sentinel_casework.cli --case cases/benign_mfa_retry.json
+python -m unittest discover -s tests -v
 ```
 
-On Windows, `py -m sentinel_casework.cli` works if `python` is unavailable.
-Run the command from the repository root. You should see a case summary and a
-chronological event timeline. No API key, cloud account, or package installation
-is needed at this stage.
+On Windows, replace `python` with `py` if needed. Run commands from the
+repository root. The first case produces one high-severity finding; the benign
+case produces zero findings. No API key, cloud account, or package installation
+is needed.
 
 ## What the case represents
 
-`cases/identity_compromise.json` contains fictional security events for a
-single identity. Repeated MFA denials, a successful approval, and a subsequent
-privilege change form the starting point for our investigation. An event alone
-does not establish malicious intent: later steps will add detections, evidence
-collection, analyst review, and a safe simulated response.
+`cases/identity_compromise.json` contains fictional security events for one
+identity. `cases/benign_mfa_retry.json` contains denied prompts without an
+approval or privilege change. `sentinel_casework/detections.py` requires at
+least three MFA denials from the same user and IP within five minutes before
+an approval, followed by a role grant within ten minutes from that same user
+and IP. Privileged roles are explicitly listed in the rule. Each finding cites
+exact event IDs. The `label` in case fixtures is
+for evaluation; the rule never reads it. A finding warrants analyst review
+and does not establish malicious intent by itself.
 
 ## Planned build stages
 
-1. Replayable case and validated event loader (current step).
-2. Detection rules and a benign comparison case.
+1. Replayable case and validated event loader (complete).
+2. Detection rule and a benign comparison case (complete).
 3. Read-only investigation tools and an agent with a recorded tool trace.
 4. Analyst approval and simulated response actions.
 5. Web case queue, timeline, evidence view, and report.
@@ -36,4 +42,3 @@ collection, analyst review, and a safe simulated response.
 
 All events in this repo are synthetic. Do not add employer data, internal rules,
 credentials, or private incident information.
-
