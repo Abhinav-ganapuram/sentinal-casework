@@ -4,8 +4,7 @@ import argparse
 from pathlib import Path
 
 from .cases import CASE_PATH, load_case
-from .detections import detect_mfa_fatigue_and_privilege_change
-
+from .baseline import investigate_case
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Replay a synthetic SOC case")
@@ -23,13 +22,19 @@ def main() -> None:
             f"{event['action']:<24} {event['outcome']:<8} {context}"
         )
 
-    findings = detect_mfa_fatigue_and_privilege_change(case["events"])
+    result = investigate_case(case)
+    findings = result["findings"]
     print(f"\nDetection findings: {len(findings)}")
     for finding in findings:
         print(f"{finding['rule_id']} | {finding['severity'].upper()} | {finding['title']}")
         print(f"  Evidence: {', '.join(finding['evidence_ids'])}")
         print(f"  Why: {finding['reason']}")
-
+    
+    print(f"\nInvestigation status: {result['status']}")
+    for step in result["trace"]:
+        print(f"  {step['purpose']}")
+        print(f"    Tool: {step['tool']} | Query: {step['query']}")
+        print(f"    Events: {', '.join(step['event_ids'])}")
 
 if __name__ == "__main__":
     main()
