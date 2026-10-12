@@ -4,7 +4,7 @@ import argparse
 import getpass
 import sys
 from pathlib import Path
-
+from .reporting import save_report
 from google import genai
 from google.genai import errors
 
@@ -19,6 +19,11 @@ def main() -> int:
     )
     parser.add_argument("--case", type=Path, default=CASE_PATH)
     parser.add_argument("--model", default="gemini-3.8-flash")
+    parser.add_argument(
+        "--output",
+        type=Path,
+        help="Save the investigation result to a new JSON file",
+    )
     args = parser.parse_args()
 
     client = None
@@ -40,6 +45,8 @@ def main() -> int:
     try:
         case = load_case(args.case)
         result = run_agent(case, decide, max_steps=3)
+        if args.output is not None:
+            save_report(result, args.output)
     except errors.APIError as error:
         print(f"Gemini API error: {error.code}", file=sys.stderr)
         print(
@@ -70,6 +77,9 @@ def main() -> int:
     if result["status"] == "step_limit":
         print("Step limit reached. Human review is still required.")
 
+    if args.output is not None:
+        print(f"Report saved: {args.output}")
+        
     return 0
 
 
