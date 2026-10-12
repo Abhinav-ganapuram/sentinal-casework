@@ -1,0 +1,146 @@
+.investigation-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin: 28px 0;
+  padding: 22px;
+  background: #162330;
+  border: 1px solid #304858;
+  border-radius: 12px;
+}
+
+.investigation-controls h3 {
+  margin: 0 0 8px;
+}
+
+.investigation-controls p {
+  margin: 0;
+  font-size: 13px;
+}
+
+.run-button {
+  padding: 12px 18px;
+  border: 0;
+  border-radius: 8px;
+  background: #8cebd7;
+  color: #10221f;
+  font-weight: 650;
+}
+
+.run-button:hover:not(:disabled) {
+  background: #aff4e5;
+}
+
+.run-button:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+
+.investigation-result {
+  margin: 24px 0 32px;
+  padding: 24px;
+  border: 1px solid #36544f;
+  border-radius: 12px;
+  background: #111e28;
+}
+
+.investigation-result h3,
+.finish-note h4 {
+  margin-top: 0;
+}
+
+.result-status {
+  color: #f2d28a;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.finding-card {
+  margin: 16px 0;
+  padding: 20px;
+  border: 1px solid #65513c;
+  border-left: 3px solid #e6b76a;
+  border-radius: 8px;
+  background: #211f22;
+}
+
+.finding-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  color: #b8c5d6;
+  font-size: 12px;
+}
+
+.severity-label {
+  color: #f2d28a;
+  font-weight: 700;
+}
+
+.finding-card h4 {
+  margin: 14px 0;
+}
+
+.finding-card p,
+.trace-list p,
+.finish-note p {
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.evidence-reference {
+  color: #8cebd7;
+  font-size: 13px;
+}
+
+.trace-list {
+  padding-left: 24px;
+}
+
+.trace-list li {
+  padding: 14px 0 14px 10px;
+  border-bottom: 1px solid #29364a;
+}
+
+.trace-list li::marker {
+  color: #8cebd7;
+  font-weight: 700;
+}
+
+.trace-list code {
+  color: #8cebd7;
+  font-size: 14px;
+}
+
+.trace-query {
+  color: #c4d0df;
+  font-family: monospace;
+}
+
+.finish-note {
+  margin-top: 24px;
+  padding: 18px;
+  border-radius: 8px;
+  background: #192c2b;
+}
+
+.finish-note p {
+  margin-bottom: 0;
+}
+
+.timeline-heading {
+  margin-top: 32px;
+}
+
+@media (max-width: 720px) {
+  .investigation-result,
+  .investigation-controls {
+    padding: 16px;
+  }
+
+  .run-button {
+    width: 100%;
+  }
+}
