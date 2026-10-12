@@ -1,13 +1,15 @@
 import { useEffect, useRef, useState } from 'react'
+import InvestigationHistory from './InvestigationHistory'
 import './Investigation.css'
 
 export default function CaseDetail({ caseId, onClose }) {
   const [caseData, setCaseData] = useState(null)
   const [error, setError] = useState('')
   const [result, setResult] = useState(null)
-  const [running, setRunning] = useState(false)
-  const [investigationError, setInvestigationError] = useState('')
-  const investigationRequest = useRef(null)
+  const [busy, setBusy] = useState(false)
+  const [resultError, setResultError] = useState('')
+  const [historyVersion, setHistoryVersion] = useState(0)
+  const resultRequest = useRef(null)
 
   useEffect(() => {
     const controller = new AbortController()
@@ -39,31 +41,28 @@ export default function CaseDetail({ caseId, onClose }) {
 
     return () => {
       controller.abort()
-      investigationRequest.current?.abort()
+      resultRequest.current?.abort()
     }
   }, [caseId])
 
-  async function runInvestigation() {
-    if (investigationRequest.current) return
+  async function requestResult(path, method) {
+    if (resultRequest.current) return
 
     const controller = new AbortController()
-    investigationRequest.current = controller
+    resultRequest.current = controller
 
-    setRunning(true)
-    setInvestigationError('')
+    setBusy(true)
+    setResultError('')
     setResult(null)
 
     try {
-      const response = await fetch(
-        `/api/cases/${encodeURIComponent(caseId)}/investigate`,
-        {
-          method: 'POST',
-          signal: controller.signal,
-        },
-      )
+      const response = await fetch(path, {
+        method,
+        signal: controller.signal,
+      })
 
       if (!response.ok) {
-        throw new Error(`Investigation failed (${response.status})`)
+        throw new Error(`Request failed (${response.status})`)
       }
 
       const data = await response.json()
@@ -74,20 +73,38 @@ export default function CaseDetail({ caseId, onClose }) {
 
       if (!controller.signal.aborted) {
         setResult(data)
+
+        if (method === 'POST') {
+          setHistoryVersion((version) => version + 1)
+        }
       }
     } catch (err) {
       if (!controller.signal.aborted) {
-        setInvestigationError(err.message)
+        setResultError(err.message)
       }
     } finally {
-      if (investigationRequest.current === controller) {
-        investigationRequest.current = null
+      if (resultRequest.current === controller) {
+        resultRequest.current = null
       }
 
       if (!controller.signal.aborted) {
-        setRunning(false)
+        setBusy(false)
       }
     }
+  }
+
+  function runInvestigation() {
+    return requestResult(
+      `/api/cases/${encodeURIComponent(caseId)}/investigate`,
+      'POST',
+    )
+  }
+
+  function openSavedRun(investigationId) {
+    return requestResult(
+      `/api/investigations/${encodeURIComponent(investigationId)}`,
+      'GET',
+    )
   }
 
   const statusLabels = {
@@ -105,17 +122,13 @@ export default function CaseDetail({ caseId, onClose }) {
             {caseData ? caseData.title : 'Case details'}
           </h2>
         </div>
-
         <button className="secondary-button" onClick={onClose}>
           Close case
         </button>
       </div>
 
       {error && <p role="alert">{error}</p>}
-
-      {!caseData && !error && (
-        <p role="status">Loading evidence…</p>
-      )}
+      {!caseData && !error && <p role="status">Loading evidence…</p>}
 
       {caseData && (
         <>
@@ -126,27 +139,28 @@ export default function CaseDetail({ caseId, onClose }) {
                 Scripted demo · Read-only tools · No model calls
               </p>
             </div>
-
             <button
               className="run-button"
               onClick={runInvestigation}
-              disabled={running}
+              disabled={busy}
             >
-              {running
-                ? 'Investigating…'
-                : result
-                  ? 'Run demo again'
-                  : 'Run demo investigation'}
+              {busy ? 'Please wait…' : 'Run new demo investigation'}
             </button>
           </div>
 
-          {running && (
-            <p role="status">Running the scripted investigation…</p>
-          )}
+          <InvestigationHistory
+            key={`${caseId}-${historyVersion}`}
+            caseId={caseId}
+            onOpen={openSavedRun}
+            disabled={busy}
+            selectedId={result?.investigation_id}
+          />
 
-          {investigationError && (
+          {busy && <p role="status">Loading investigation result…</p>}
+
+          {resultError && (
             <div className="error-panel" role="alert">
-              <p>{investigationError}</p>
+              <p>{resultError}</p>
               <p>Check the backend connection and try again.</p>
             </div>
           )}
@@ -162,6 +176,13 @@ export default function CaseDetail({ caseId, onClose }) {
                   {result.execution_mode === 'demo'
                     ? 'SCRIPTED DEMO'
                     : result.execution_mode}
+                </span>
+              </div>
+
+              <div className="run-metadata">
+                <span>Run ID: {result.investigation_id}</span>
+                <span>
+                  Saved: {new Date(result.created_at).toISOString()}
                 </span>
               </div>
 
@@ -210,11 +231,10 @@ export default function CaseDetail({ caseId, onClose }) {
                     <p className="trace-query">{step.query}</p>
                     <p>{step.reason}</p>
                     <p className="evidence-reference">
-                      {step.result_count} events: {
-                        step.event_ids.length
-                          ? step.event_ids.join(', ')
-                          : 'None'
-                      }
+                      {step.result_count} events:{' '}
+                      {step.event_ids.length
+                        ? step.event_ids.join(', ')
+                        : 'None'}
                     </p>
                   </li>
                 ))}
