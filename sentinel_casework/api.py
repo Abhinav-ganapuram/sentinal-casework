@@ -10,6 +10,7 @@ from .demo_adapter import DemoDecider
 from .storage import (
     DEFAULT_DB_PATH,
     get_investigation,
+    list_investigations,
     save_investigation,
 )
 
@@ -57,6 +58,11 @@ def create_app(db_path: Path = DEFAULT_DB_PATH) -> FastAPI:
     @application.get("/cases/{case_id}")
     def case_detail(case_id: str) -> dict:
         return get_case(case_id)
+
+    @application.get("/cases/{case_id}/investigations")
+    def case_history(case_id: str) -> list[dict]:
+        get_case(case_id)
+        return list_investigations(case_id, db_path)
 
     @application.post("/cases/{case_id}/investigate")
     def investigate(case_id: str) -> dict:

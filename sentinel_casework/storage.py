@@ -88,3 +88,34 @@ def get_investigation(
         "created_at": row["created_at"],
         "result": json.loads(row["result_json"]),
     }
+def list_investigations(
+    case_id: str,
+    db_path: Path = DEFAULT_DB_PATH,
+) -> list[dict]:
+    """Return summaries of the latest 50 investigations for a case."""
+    with closing(connect_database(db_path)) as connection:
+        rows = connection.execute(
+            """
+            SELECT investigation_id, case_id, created_at, result_json
+            FROM investigations
+            WHERE case_id = ?
+            ORDER BY created_at DESC, rowid DESC
+            LIMIT 50
+            """,
+            (case_id,),
+        ).fetchall()
+
+    summaries = []
+
+    for row in rows:
+        result = json.loads(row["result_json"])
+        summaries.append({
+            "investigation_id": row["investigation_id"],
+            "case_id": row["case_id"],
+            "created_at": row["created_at"],
+            "status": result["status"],
+            "execution_mode": result["execution_mode"],
+            "finding_count": len(result["findings"]),
+        })
+
+    return summaries
