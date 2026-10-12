@@ -1,0 +1,104 @@
+.workspace {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 36px 64px;
+}
+
+.topbar, .brand, .section-heading, .case-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.topbar {
+  min-height: 92px;
+  border-bottom: 1px solid #263142;
+}
+
+.brand { font-size: 18px; font-weight: 650; }
+.brand-mark {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: #8cebd7;
+  color: #10221f;
+}
+
+.muted, .subtitle { color: #a0aec0; }
+.badge, .case-id, .eyebrow {
+  color: #8cebd7;
+  font-size: 12px;
+  font-weight: 650;
+  letter-spacing: 1.2px;
+}
+
+.badge {
+  padding: 9px 12px;
+  border: 1px solid #31584f;
+  border-radius: 6px;
+}
+
+.intro { padding: 56px 0 32px; }
+h1 {
+  font-size: clamp(30px, 4vw, 48px);
+  line-height: 1.15;
+  letter-spacing: -1.5px;
+  margin: 16px 0;
+}
+.subtitle { max-width: 620px; line-height: 1.7; }
+
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 44px;
+}
+
+.metric, .case-card {
+  background: #121b28;
+  border: 1px solid #29364a;
+  border-radius: 14px;
+  padding: 24px;
+}
+
+.metric > span { display: block; color: #a0aec0; font-size: 14px; }
+.metric strong { display: block; font-size: 34px; margin-top: 12px; }
+.metric .mode-label { font-size: 22px; color: #8cebd7; }
+
+.section-heading { margin-bottom: 18px; flex-wrap: wrap; }
+h2 { font-size: 22px; margin: 0; }
+.section-heading > span { font-size: 13px; }
+
+.case-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
+.case-card h3 { font-size: 20px; line-height: 1.5; margin: 18px 0 28px; }
+.case-footer {
+  border-top: 1px solid #29364a;
+  padding-top: 18px;
+  color: #a0aec0;
+  font-size: 12px;
+  flex-wrap: wrap;
+}
+
+.error-panel {
+  border: 1px solid #975354;
+  border-radius: 12px;
+  padding: 20px;
+  background: #291c23;
+}
+.error-panel button {
+  padding: 10px 16px;
+  border: 0;
+  border-radius: 6px;
+  background: #8cebd7;
+  color: #10221f;
+}
+
+@media (max-width: 720px) {
+  .workspace { padding: 0 20px 40px; }
+  .topbar { padding: 20px 0; flex-wrap: wrap; }
+  .metrics, .case-grid { grid-template-columns: 1fr; }
+  .intro { padding-top: 32px; }
+}
