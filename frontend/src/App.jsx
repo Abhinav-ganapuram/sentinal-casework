@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import CaseDetail from './CaseDetail'
 import './App.css'
 
 export default function App() {
@@ -6,6 +7,7 @@ export default function App() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [attempt, setAttempt] = useState(0)
+  const [selectedCase, setSelectedCase] = useState(null)
 
   useEffect(() => {
     const controller = new AbortController()
@@ -60,14 +62,20 @@ export default function App() {
       <header className="topbar">
         <div className="brand">
           <span className="brand-mark" aria-hidden="true">S</span>
-          <span>Sentinel<span className="muted"> / Casework</span></span>
+          <span>
+            Sentinel<span className="muted"> / Casework</span>
+          </span>
         </div>
         <span className="badge">SYNTHETIC DATA · DEMO</span>
       </header>
 
       <section className="intro">
         <p className="eyebrow">SECURITY OPERATIONS WORKSPACE</p>
-        <h1>Every investigation starts<br />with the evidence.</h1>
+        <h1>
+          Every investigation starts
+          <br />
+          with the evidence.
+        </h1>
         <p className="subtitle">
           Explore synthetic incidents, trace investigation steps,
           and review the evidence behind each finding.
@@ -79,10 +87,12 @@ export default function App() {
           <span>Available cases</span>
           <strong>{loading || error ? '—' : cases.length}</strong>
         </div>
+
         <div className="metric">
           <span>Source events</span>
           <strong>{loading || error ? '—' : eventCount}</strong>
         </div>
+
         <div className="metric">
           <span>Investigation mode</span>
           <strong className="mode-label">Scripted demo</strong>
@@ -92,7 +102,9 @@ export default function App() {
       <section className="case-section">
         <div className="section-heading">
           <h2>Case library</h2>
-          <span className="muted">Synthetic investigation scenarios</span>
+          <span className="muted">
+            Synthetic investigation scenarios
+          </span>
         </div>
 
         {loading && <p role="status">Loading cases…</p>}
@@ -115,15 +127,35 @@ export default function App() {
               <article className="case-card" key={item.case_id}>
                 <span className="case-id">{item.case_id}</span>
                 <h3>{item.title}</h3>
+
                 <div className="case-footer">
                   <span>{item.event_count} source events</span>
                   <span>Synthetic fixture</span>
                 </div>
+
+                <button
+                  className="open-case-button"
+                  onClick={() => setSelectedCase(item.case_id)}
+                  aria-label={`Open ${item.case_id}`}
+                  aria-pressed={selectedCase === item.case_id}
+                >
+                  {selectedCase === item.case_id
+                    ? 'Case selected'
+                    : 'Open case →'}
+                </button>
               </article>
             ))}
           </div>
         )}
       </section>
+
+      {selectedCase && (
+        <CaseDetail
+          key={selectedCase}
+          caseId={selectedCase}
+          onClose={() => setSelectedCase(null)}
+        />
+      )}
     </main>
   )
 }
