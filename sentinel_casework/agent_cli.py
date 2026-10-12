@@ -7,7 +7,7 @@ from pathlib import Path
 from .reporting import save_report
 from google import genai
 from google.genai import errors
-
+from .demo_adapter import DemoDecider
 from .agent import run_agent
 from .cases import CASE_PATH, load_case
 from .gemini_adapter import GeminiDecider
@@ -23,6 +23,12 @@ def main() -> int:
         "--output",
         type=Path,
         help="Save the investigation result to a new JSON file",
+    )
+    parser.add_argument(
+        "--mode",
+        choices=["live", "demo"],
+        default="live",
+        help="Use live Gemini decisions or an offline scripted demo",
     )
     args = parser.parse_args()
 
@@ -44,7 +50,10 @@ def main() -> int:
 
     try:
         case = load_case(args.case)
-        result = run_agent(case, decide, max_steps=3)
+        decision_function = DemoDecider() if args.mode == "demo" else decide
+        result = run_agent(case, decision_function, max_steps=3)
+        result["execution_mode"] = args.mode
+        
         if args.output is not None:
             save_report(result, args.output)
     except errors.APIError as error:
@@ -63,7 +72,10 @@ def main() -> int:
     finally:
         if client is not None:
             client.close()
-
+    if args.mode == "demo":
+        print("Mode: DEMO — scripted decisions; no model calls")
+    else:
+        print("Mode: LIVE — Gemini decisions when investigation is needed")
     print(f"{result['case_id']} | {result['status']}")
 
     for number, step in enumerate(result["trace"], start=1):
@@ -79,7 +91,7 @@ def main() -> int:
 
     if args.output is not None:
         print(f"Report saved: {args.output}")
-        
+
     return 0
 
 
