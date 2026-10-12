@@ -1,3 +1,6 @@
 openai>=3,<4
 google-genai>=2.3,<3
 pydantic>=2,<3
+fastapi
+uvicorn
+httpx
