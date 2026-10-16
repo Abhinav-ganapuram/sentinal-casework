@@ -3,7 +3,7 @@
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
-
+from .review_api import create_review_router
 from .agent import run_agent
 from .cases import CASE_PATH, load_case
 from .demo_adapter import DemoDecider
@@ -93,7 +93,7 @@ def create_app(db_path: Path = DEFAULT_DB_PATH) -> FastAPI:
             "investigation_id": saved["investigation_id"],
             "created_at": saved["created_at"],
         }
-
+    application.include_router(create_review_router(db_path))
     return application
 
 
