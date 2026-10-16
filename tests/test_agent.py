@@ -1,9 +1,79 @@
 import unittest
 
-from sentinel_casework.agent import run_agent, validate_decision
 from sentinel_casework.cases import load_case
+from sentinel_casework.agent import (
+    run_agent,
+    validate_decision,
+    validate_investigation_step,
+)
 
 class AgentDecisionTests(unittest.TestCase):
+    
+    def test_rejects_identifier_not_in_case_evidence(self):
+        case = load_case()
+
+        decision = {
+            "tool": "get_ip_events",
+            "value": "198.51.100.200",
+            "reason": "Investigate source IP",
+        }
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "not present in case evidence",
+        ):
+            validate_investigation_step(
+                decision,
+                case["events"],
+                [],
+            )
+
+    def test_rejects_repeated_lookup(self):
+        case = load_case()
+
+        decision = {
+            "tool": "get_user_events",
+            "value": case["subject"],
+            "reason": "Investigate user activity",
+        }
+
+        trace = [{
+            "tool": "get_user_events",
+            "query": case["subject"],
+            "result_count": 8,
+            "event_ids": [],
+        }]
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "Repeated investigation lookup",
+        ):
+            validate_investigation_step(
+                decision,
+                case["events"],
+                trace,
+            )
+
+    def test_accepts_new_evidence_backed_lookup(self):
+        case = load_case()
+
+        decision = {
+            "tool": "get_ip_events",
+            "value": "203.0.113.57",
+            "reason": "Review related source IP activity",
+        }
+
+        validated = validate_investigation_step(
+            decision,
+            case["events"],
+            [],
+        )
+
+        self.assertEqual(
+            validated["value"],
+            "203.0.113.57",
+        )
+
     def test_accepts_approved_lookup(self):
         decision = validate_decision({
             "tool": "get_ip_events",
@@ -81,19 +151,32 @@ class AgentDecisionTests(unittest.TestCase):
 
         self.assertEqual(run_agent(case, decide)["status"], "no_detection")
 
+    
     def test_agent_stops_at_step_limit(self):
         case = load_case()
 
-        def decide(context):
-            return {
+        choices = iter([
+            {
                 "tool": "get_user_events",
                 "value": case["subject"],
-                "reason": "Check account",
-            }
+                "reason": "Review account activity",
+            },
+            {
+                "tool": "get_ip_events",
+                "value": "203.0.113.57",
+                "reason": "Review source IP activity",
+            },
+        ])
 
-        result = run_agent(case, decide, max_steps=2)
+        result = run_agent(
+            case,
+            lambda context: next(choices),
+            max_steps=2,
+        )
+
         self.assertEqual(result["status"], "step_limit")
         self.assertEqual(len(result["trace"]), 2)
+
 
 if __name__ == "__main__":
     unittest.main()

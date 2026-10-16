@@ -24,6 +24,52 @@ def validate_decision(decision: dict) -> dict:
         "value": value if tool != "finish" else "",
         "reason": reason.strip(),
     }
+
+def validate_investigation_step(
+    decision: dict,
+    events: list[dict],
+    trace: list[dict],
+) -> dict:
+    """Validate a proposed lookup against available evidence and history."""
+    decision = validate_decision(decision)
+
+    if decision["tool"] == "finish":
+        return decision
+
+    tool = decision["tool"]
+    value = decision["value"].strip()
+
+    if tool == "get_user_events":
+        allowed_values = {
+            event["user"] for event in events
+        }
+    elif tool == "get_ip_events":
+        allowed_values = {
+            event["details"].get("ip")
+            for event in events
+            if event["details"].get("ip")
+        }
+    else:
+        raise ValueError("Unsupported investigation tool")
+
+    if value not in allowed_values:
+        raise ValueError(
+            f"Lookup identifier is not present in case evidence: {value}"
+        )
+
+    if any(
+        step["tool"] == tool and step["query"] == value
+        for step in trace
+    ):
+        raise ValueError(
+            f"Repeated investigation lookup: {tool}({value})"
+        )
+
+    return {
+        **decision,
+        "value": value,
+    }
+
 def run_agent(case: dict, decide, max_steps: int = 3) -> dict:
     """Investigate a detected case using bounded, validated tool choices."""
     from .detections import detect_mfa_fatigue_and_privilege_change
@@ -48,7 +94,10 @@ def run_agent(case: dict, decide, max_steps: int = 3) -> dict:
             "finding": findings[0],
             "observations": observations,
         }
-        decision = validate_decision(decide(context))
+        decision = validate_investigation_step(
+        decide(context),
+        events,
+        trace,)
 
         if decision["tool"] == "finish":
             return {
