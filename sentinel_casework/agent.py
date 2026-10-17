@@ -70,10 +70,14 @@ def validate_investigation_step(
         "value": value,
     }
 
+
 def run_agent(case: dict, decide, max_steps: int = 3) -> dict:
-    """Investigate a detected case using bounded, validated tool choices."""
+    """Investigate a case with bounded, validated agent decisions."""
     from .detections import detect_mfa_fatigue_and_privilege_change
     from .tool_runner import run_lookup
+
+    if not isinstance(max_steps, int) or isinstance(max_steps, bool) or max_steps < 1:
+        raise ValueError("max_steps must be a positive integer")
 
     events = case["events"]
     findings = detect_mfa_fatigue_and_privilege_change(events)
@@ -88,16 +92,34 @@ def run_agent(case: dict, decide, max_steps: int = 3) -> dict:
             "trace": [],
         }
 
-    for _ in range(max_steps):
+    for step_number in range(1, max_steps + 1):
         context = {
             "case_id": case["case_id"],
             "finding": findings[0],
             "observations": observations,
         }
-        decision = validate_investigation_step(
-        decide(context),
-        events,
-        trace,)
+
+        try:
+            proposed_decision = decide(context)
+
+            decision = validate_investigation_step(
+                proposed_decision,
+                events,
+                trace,
+            )
+
+        except ValueError as error:
+            return {
+                "case_id": case["case_id"],
+                "status": "agent_error",
+                "findings": findings,
+                "trace": trace,
+                "error": {
+                    "type": "invalid_decision",
+                    "message": str(error),
+                    "step": step_number,
+                },
+            }
 
         if decision["tool"] == "finish":
             return {
@@ -109,10 +131,14 @@ def run_agent(case: dict, decide, max_steps: int = 3) -> dict:
             }
 
         results, step = run_lookup(
-            events, decision["tool"], decision["value"]
+            events,
+            decision["tool"],
+            decision["value"],
         )
+
         step["reason"] = decision["reason"]
         trace.append(step)
+
         observations.append({
             "tool": decision["tool"],
             "events": results,

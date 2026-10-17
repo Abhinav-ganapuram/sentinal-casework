@@ -176,7 +176,89 @@ class AgentDecisionTests(unittest.TestCase):
 
         self.assertEqual(result["status"], "step_limit")
         self.assertEqual(len(result["trace"]), 2)
+    
+    def test_invalid_ai_decision_returns_agent_error(self):
+        case = load_case()
 
+        def decide(context):
+            return {
+                "tool": "delete_account",
+                "value": case["subject"],
+                "reason": "Delete the account",
+            }
+
+        result = run_agent(case, decide)
+
+        self.assertEqual(result["status"], "agent_error")
+        self.assertEqual(
+            result["error"]["type"],
+            "invalid_decision",
+        )
+        self.assertEqual(result["error"]["step"], 1)
+        self.assertEqual(result["trace"], [])
+        self.assertTrue(result["findings"])
+
+    def test_agent_error_preserves_previous_lookups(self):
+        case = load_case()
+
+        choices = iter([
+            {
+                "tool": "get_user_events",
+                "value": case["subject"],
+                "reason": "Review account activity",
+            },
+            {
+                "tool": "get_user_events",
+                "value": case["subject"],
+                "reason": "Repeat the same lookup",
+            },
+        ])
+
+        result = run_agent(
+            case,
+            lambda context: next(choices),
+        )
+
+        self.assertEqual(result["status"], "agent_error")
+        self.assertEqual(result["error"]["step"], 2)
+        self.assertEqual(len(result["trace"]), 1)
+        self.assertEqual(
+            result["trace"][0]["tool"],
+            "get_user_events",
+        )
+        self.assertTrue(result["findings"])
+
+    def test_model_value_error_returns_agent_error(self):
+        case = load_case()
+
+        def decide(context):
+            raise ValueError("Model returned invalid JSON")
+
+        result = run_agent(case, decide)
+
+        self.assertEqual(result["status"], "agent_error")
+        self.assertEqual(
+            result["error"]["message"],
+            "Model returned invalid JSON",
+        )
+
+    def test_invalid_step_limit_is_rejected(self):
+        case = load_case()
+
+        for limit in (0, -1, True):
+            with self.subTest(limit=limit):
+                with self.assertRaisesRegex(
+                    ValueError,
+                    "max_steps must be a positive integer",
+                ):
+                    run_agent(
+                        case,
+                        lambda context: {
+                            "tool": "finish",
+                            "reason": "Done",
+                        },
+                        max_steps=limit,
+                    )
 
 if __name__ == "__main__":
     unittest.main()
