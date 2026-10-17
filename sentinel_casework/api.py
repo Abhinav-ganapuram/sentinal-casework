@@ -7,7 +7,7 @@ from typing import Callable, Literal
 
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, ConfigDict
-
+from .report_builder import build_incident_report
 from .agent import run_agent
 from .cases import CASE_PATH, load_case
 from .demo_adapter import DemoDecider
@@ -141,7 +141,7 @@ def create_app(
             ) from error
 
         result["execution_mode"] = selected_mode
-
+        result["report"] = build_incident_report(case, result)
         saved = save_investigation(
             result,
             db_path,
