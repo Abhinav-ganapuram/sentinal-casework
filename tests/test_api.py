@@ -3,11 +3,103 @@ import unittest
 from pathlib import Path
 
 from fastapi.testclient import TestClient
-
+from unittest.mock import patch
 from sentinel_casework.api import create_app
 
 
 class APITests(unittest.TestCase):
+    
+    def test_live_ai_investigation_is_saved(self):
+        from sentinel_casework.demo_adapter import DemoDecider
+
+        live_app = create_app(
+            self.db_path,
+            live_decider_factory=lambda: DemoDecider(),
+        )
+
+        with TestClient(live_app) as client:
+            response = client.post(
+                "/cases/CASE-001/investigate",
+                json={"mode": "gemini"},
+            )
+
+        self.assertEqual(response.status_code, 200)
+
+        result = response.json()
+
+        self.assertEqual(
+            result["execution_mode"],
+            "gemini",
+        )
+        self.assertEqual(
+            result["status"],
+            "needs_review",
+        )
+        self.assertEqual(len(result["trace"]), 2)
+
+        saved = self.client.get(
+            f"/investigations/{result['investigation_id']}"
+        )
+
+        self.assertEqual(saved.status_code, 200)
+        self.assertEqual(saved.json(), result)
+
+    def test_gemini_requires_server_configuration(self):
+        with patch.dict(
+            "os.environ",
+            {"GEMINI_API_KEY": ""},
+        ):
+            response = self.client.post(
+                "/cases/CASE-001/investigate",
+                json={"mode": "gemini"},
+            )
+
+        self.assertEqual(response.status_code, 503)
+
+    def test_invalid_investigation_mode_is_rejected(self):
+        response = self.client.post(
+            "/cases/CASE-001/investigate",
+            json={"mode": "unrestricted"},
+        )
+
+        self.assertEqual(response.status_code, 422)
+
+    def test_invalid_ai_decision_is_saved_safely(self):
+        def invalid_factory():
+            def decide(context):
+                return {
+                    "tool": "delete_account",
+                    "value": "unknown",
+                    "reason": "Unsupported action",
+                }
+
+            return decide
+
+        live_app = create_app(
+            self.db_path,
+            live_decider_factory=invalid_factory,
+        )
+
+        with TestClient(live_app) as client:
+            response = client.post(
+                "/cases/CASE-001/investigate",
+                json={"mode": "gemini"},
+            )
+
+        self.assertEqual(response.status_code, 200)
+
+        result = response.json()
+
+        self.assertEqual(
+            result["status"],
+            "agent_error",
+        )
+        self.assertEqual(
+            result["execution_mode"],
+            "gemini",
+        )
+        self.assertTrue(result["findings"])
+        self.assertEqual(result["trace"], [])
     def setUp(self):
         self.directory = tempfile.TemporaryDirectory()
         self.addCleanup(self.directory.cleanup)

@@ -1,12 +1,21 @@
+
 """Local API for synthetic SOC case investigations."""
 
+import os
 from pathlib import Path
+from typing import Callable, Literal
 
 from fastapi import FastAPI, HTTPException
-from .review_api import create_review_router
+from pydantic import BaseModel, ConfigDict
+
 from .agent import run_agent
 from .cases import CASE_PATH, load_case
 from .demo_adapter import DemoDecider
+from .gemini_adapter import (
+    GeminiDecider,
+    GeminiProviderError,
+)
+from .review_api import create_review_router
 from .storage import (
     DEFAULT_DB_PATH,
     get_investigation,
@@ -21,20 +30,56 @@ CASE_FILES = {
 }
 
 
+class InvestigationRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    mode: Literal["demo", "gemini"] = "demo"
+
+
 def get_case(case_id: str) -> dict:
     path = CASE_FILES.get(case_id)
 
     if path is None:
-        raise HTTPException(status_code=404, detail="Case not found")
+        raise HTTPException(
+            status_code=404,
+            detail="Case not found",
+        )
 
     return load_case(path)
 
 
-def create_app(db_path: Path = DEFAULT_DB_PATH) -> FastAPI:
+def create_live_decider():
+    if not (
+        os.getenv("GEMINI_API_KEY")
+        or os.getenv("GOOGLE_API_KEY")
+    ):
+        raise HTTPException(
+            status_code=503,
+            detail="Gemini API key is not configured on the server",
+        )
+
+    return GeminiDecider(
+        model=os.getenv(
+            "SENTINEL_GEMINI_MODEL",
+            "gemini-3.8-flash",
+        )
+    )
+
+
+def create_app(
+    db_path: Path = DEFAULT_DB_PATH,
+    live_decider_factory: Callable | None = None,
+) -> FastAPI:
+
     application = FastAPI(
         title="Sentinel Casework",
-        description="Synthetic SOC investigations — offline demo API",
-        version="0.2.0",
+        description="Evidence-backed SOC investigation API",
+        version="0.3.0",
+    )
+
+    factory = (
+        live_decider_factory
+        if live_decider_factory is not None
+        else create_live_decider
     )
 
     @application.get("/health")
@@ -65,12 +110,42 @@ def create_app(db_path: Path = DEFAULT_DB_PATH) -> FastAPI:
         return list_investigations(case_id, db_path)
 
     @application.post("/cases/{case_id}/investigate")
-    def investigate(case_id: str) -> dict:
-        case = get_case(case_id)
-        result = run_agent(case, DemoDecider(), max_steps=3)
-        result["execution_mode"] = "demo"
+    def investigate(
+        case_id: str,
+        request: InvestigationRequest | None = None,
+    ) -> dict:
 
-        saved = save_investigation(result, db_path)
+        case = get_case(case_id)
+
+        selected_mode = (
+            request.mode
+            if request is not None
+            else "demo"
+        )
+
+        if selected_mode == "demo":
+            decider = DemoDecider()
+        else:
+            decider = factory()
+
+        try:
+            result = run_agent(
+                case,
+                decider,
+                max_steps=3,
+            )
+        except GeminiProviderError as error:
+            raise HTTPException(
+                status_code=502,
+                detail="Gemini provider request failed. Check model access, API quota, and backend logs.",
+            ) from error
+
+        result["execution_mode"] = selected_mode
+
+        saved = save_investigation(
+            result,
+            db_path,
+        )
 
         return {
             **saved["result"],
@@ -80,7 +155,10 @@ def create_app(db_path: Path = DEFAULT_DB_PATH) -> FastAPI:
 
     @application.get("/investigations/{investigation_id}")
     def investigation_detail(investigation_id: str) -> dict:
-        saved = get_investigation(investigation_id, db_path)
+        saved = get_investigation(
+            investigation_id,
+            db_path,
+        )
 
         if saved is None:
             raise HTTPException(
@@ -93,7 +171,11 @@ def create_app(db_path: Path = DEFAULT_DB_PATH) -> FastAPI:
             "investigation_id": saved["investigation_id"],
             "created_at": saved["created_at"],
         }
-    application.include_router(create_review_router(db_path))
+
+    application.include_router(
+        create_review_router(db_path)
+    )
+
     return application
 
 

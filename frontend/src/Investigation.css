@@ -209,3 +209,33 @@
     flex-direction: column;
   }
 }
+
+.mode-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.mode-controls label {
+  color: #b8c5d6;
+  font-size: 13px;
+}
+
+.mode-controls select {
+  background: #101b25;
+  color: #f1f5f9;
+  border: 1px solid #405466;
+  border-radius: 8px;
+  padding: 11px 14px;
+  font-size: 14px;
+}
+
+.mode-controls select:focus-visible {
+  outline: 2px solid #8cebd7;
+  outline-offset: 2px;
+}
+
+.mode-controls select:disabled {
+  opacity: 0.6;
+}
