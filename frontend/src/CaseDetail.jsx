@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react'
 import InvestigationHistory from './InvestigationHistory'
 import './Investigation.css'
 import IncidentReport from './IncidentReport'
+import AnalystReview from './AnalystReview'
 
 export default function CaseDetail({ caseId, onClose }) {
   const [caseData, setCaseData] = useState(null)
@@ -417,6 +418,12 @@ export default function CaseDetail({ caseId, onClose }) {
             </section>
             {result.report && (
               <IncidentReport report={result.report} />
+            )}
+            {result.investigation_id && (
+              <AnalystReview
+                key={result.investigation_id}
+                investigationId={result.investigation_id}
+              />
             )}
             </>
           )}

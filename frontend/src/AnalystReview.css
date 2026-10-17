@@ -1,0 +1,162 @@
+
+.analyst-review {
+  margin-top: 28px;
+  padding: 24px;
+  background: #111d29;
+  border: 1px solid #304253;
+  border-radius: 14px;
+  color: #e8eef5;
+}
+
+.review-eyebrow {
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  font-weight: 700;
+  color: #8cebd7;
+}
+
+.review-heading h3 {
+  font-size: 22px;
+  margin: 8px 0;
+}
+
+.review-heading p {
+  color: #aebed0;
+}
+
+.review-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.review-form label {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.review-form select,
+.review-form textarea {
+  background: #192938;
+  color: #f1f5f9;
+  border: 1px solid #405466;
+  border-radius: 8px;
+  padding: 12px;
+  font: inherit;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.review-form textarea {
+  resize: vertical;
+  line-height: 1.6;
+}
+
+.review-form-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.review-form-footer span {
+  font-size: 12px;
+  color: #aebed0;
+}
+
+.review-form-footer button {
+  background: #157e72;
+  color: white;
+  padding: 11px 18px;
+  border: 0;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.review-form-footer button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.review-history {
+  margin-top: 28px;
+  border-top: 1px solid #304253;
+  padding-top: 20px;
+}
+
+.review-history h4 {
+  margin-bottom: 16px;
+}
+
+.review-history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.review-entry {
+  background: #192938;
+  border: 1px solid #304253;
+  border-radius: 9px;
+  padding: 16px;
+}
+
+.review-entry-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.review-entry-header time,
+.review-muted {
+  color: #aebed0;
+  font-size: 12px;
+}
+
+.review-verdict {
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 10px;
+  border-radius: 6px;
+}
+
+.review-verdict.suspicious {
+  background: #5e2929;
+  color: #ffb4b4;
+}
+
+.review-verdict.benign {
+  background: #244a36;
+  color: #a7f3c1;
+}
+
+.review-verdict.needs_more_evidence {
+  background: #514226;
+  color: #fbe5a1;
+}
+
+.review-entry p {
+  margin-bottom: 0;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.review-error {
+  color: #ffb4b4;
+}
+
+.review-success {
+  color: #a7f3c1;
+}
+
+@media (max-width: 800px) {
+  .analyst-review {
+    padding: 16px;
+  }
+}
