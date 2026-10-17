@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from 'react'
 import InvestigationHistory from './InvestigationHistory'
 import './Investigation.css'
+import IncidentReport from './IncidentReport'
 
 export default function CaseDetail({ caseId, onClose }) {
   const [caseData, setCaseData] = useState(null)
@@ -253,6 +254,7 @@ export default function CaseDetail({ caseId, onClose }) {
           )}
 
           {result && (
+            <>
             <section
               className="investigation-result"
               aria-labelledby="result-heading"
@@ -413,6 +415,10 @@ export default function CaseDetail({ caseId, onClose }) {
                 </p>
               )}
             </section>
+            {result.report && (
+              <IncidentReport report={result.report} />
+            )}
+            </>
           )}
 
           <h3 className="timeline-heading">

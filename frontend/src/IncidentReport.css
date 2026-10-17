@@ -1,0 +1,133 @@
+
+.incident-report {
+  margin-top: 28px;
+  padding: 24px;
+  background: #111d29;
+  border: 1px solid #304253;
+  border-radius: 14px;
+  color: #e8eef5;
+}
+
+.report-header,
+.report-event-heading,
+.report-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.report-header h3 {
+  margin: 5px 0;
+  font-size: 22px;
+}
+
+.report-eyebrow {
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  color: #8cebd7;
+  font-weight: 700;
+}
+
+.report-export {
+  background: #157e72;
+  color: white;
+  border: 0;
+  border-radius: 8px;
+  padding: 11px 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.report-export:hover {
+  background: #19998a;
+}
+
+.report-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin: 24px 0;
+}
+
+.report-stat {
+  background: #1a2a39;
+  padding: 14px;
+  border: 1px solid #33485b;
+  border-radius: 9px;
+}
+
+.report-stat span {
+  display: block;
+  font-size: 12px;
+  color: #aebed0;
+  margin-bottom: 8px;
+}
+
+.report-stat strong {
+  font-size: 15px;
+  overflow-wrap: anywhere;
+  text-transform: capitalize;
+}
+
+.report-section {
+  margin-top: 26px;
+}
+
+.report-section h4 {
+  margin-bottom: 12px;
+  color: #9ee8d9;
+}
+
+.report-section p,
+.report-section li {
+  line-height: 1.7;
+}
+
+.report-section li {
+  margin-bottom: 8px;
+}
+
+.report-timeline {
+  border-left: 2px solid #3b776f;
+  padding-left: 18px;
+}
+
+.report-event {
+  padding: 14px;
+  background: #192938;
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+
+.report-event-heading time {
+  font-size: 12px;
+  color: #aebed0;
+}
+
+.report-event p {
+  margin: 7px 0 0;
+}
+
+.report-footer {
+  margin-top: 28px;
+  border-top: 1px solid #304253;
+  padding-top: 18px;
+  color: #aebed0;
+  font-size: 13px;
+}
+
+.report-footer strong {
+  color: #9ee8d9;
+}
+
+@media (max-width: 800px) {
+  .report-summary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .incident-report {
+    padding: 16px;
+  }
+}
