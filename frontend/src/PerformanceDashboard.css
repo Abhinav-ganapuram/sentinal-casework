@@ -1,0 +1,142 @@
+
+.performance-panel {
+  margin-top: 28px;
+  padding: 24px;
+  border: 1px solid #304253;
+  border-radius: 14px;
+  background: #111d29;
+  color: #e8eef5;
+}
+
+.performance-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.performance-eyebrow {
+  color: #8cebd7;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.4px;
+}
+
+.performance-heading h2 {
+  margin: 8px 0;
+}
+
+.performance-heading p {
+  color: #aebed0;
+}
+
+.performance-heading button {
+  padding: 11px 16px;
+  background: #157e72;
+  color: white;
+  border: 0;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.performance-heading button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.performance-stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin: 24px 0;
+}
+
+.performance-stats > div {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  background: #1a2a39;
+  border: 1px solid #33485b;
+  padding: 16px;
+  border-radius: 9px;
+}
+
+.performance-stats span {
+  color: #aebed0;
+  font-size: 12px;
+}
+
+.performance-stats strong {
+  font-size: 22px;
+}
+
+.performance-panel h3 {
+  margin-top: 26px;
+  margin-bottom: 14px;
+}
+
+.performance-modes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+.performance-mode {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: #192938;
+  border: 1px solid #304253;
+  padding: 16px;
+  border-radius: 9px;
+}
+
+.performance-mode span {
+  font-size: 13px;
+  color: #aebed0;
+}
+
+.performance-table-scroll {
+  overflow-x: auto;
+}
+
+.performance-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  min-width: 660px;
+}
+
+.performance-table th,
+.performance-table td {
+  padding: 12px;
+  border-bottom: 1px solid #304253;
+  font-size: 13px;
+}
+
+.performance-table th {
+  color: #9ee8d9;
+}
+
+.performance-footnote {
+  margin-top: 18px;
+  font-size: 12px;
+  line-height: 1.6;
+  color: #aebed0;
+}
+
+.performance-error {
+  color: #ffb4b4;
+}
+
+@media (max-width: 800px) {
+  .performance-panel {
+    padding: 16px;
+  }
+
+  .performance-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

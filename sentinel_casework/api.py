@@ -3,6 +3,8 @@
 
 import os
 from pathlib import Path
+from .metrics_api import create_metrics_router
+from .metrics import run_measured_investigation
 from typing import Callable, Literal
 from .narrative_api import create_narrative_router
 from fastapi import FastAPI, HTTPException
@@ -129,10 +131,10 @@ def create_app(
             decider = factory()
 
         try:
-            result = run_agent(
-                case,
-                decider,
-                max_steps=3,
+            result = run_measured_investigation(
+            case,
+            decider,
+            max_steps=3,
             )
         except GeminiProviderError as error:
             raise HTTPException(
@@ -179,6 +181,10 @@ def create_app(
     create_narrative_router(db_path)
     )
 
+    application.include_router(
+    create_metrics_router(db_path)
+    )
+    
     return application
 
 

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import CaseDetail from './CaseDetail'
 import './App.css'
+import PerformanceDashboard from './PerformanceDashboard'
 
 export default function App() {
   const [cases, setCases] = useState([])
@@ -156,6 +157,7 @@ export default function App() {
           onClose={() => setSelectedCase(null)}
         />
       )}
+      <PerformanceDashboard />
     </main>
   )
 }
