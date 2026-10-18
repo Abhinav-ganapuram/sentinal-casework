@@ -29,6 +29,10 @@ from .storage import (
 CASE_FILES = {
     "CASE-001": CASE_PATH,
     "CASE-002": CASE_PATH.parent / "benign_mfa_retry.json",
+    "CASE-003": CASE_PATH.parent / "mfa_global_admin.json",
+    "CASE-004": CASE_PATH.parent / "mfa_threshold_attack.json",
+    "CASE-005": CASE_PATH.parent / "benign_cross_ip.json",
+    "CASE-006": CASE_PATH.parent / "benign_delayed_grant.json",
 }
 
 
@@ -184,7 +188,7 @@ def create_app(
     application.include_router(
     create_metrics_router(db_path)
     )
-    
+
     return application
 
 

@@ -1,0 +1,59 @@
+
+{
+  "case_id": "CASE-004",
+  "title": "MFA fatigue sequence near rule timing thresholds",
+  "subject": "priya.nair@example.test",
+  "label": "suspicious",
+  "scenario": "MFA denials occur just inside the five-minute detection window and a privileged grant occurs just inside the ten-minute window.",
+  "events": [
+    {
+      "id": "C401",
+      "timestamp": "2026-10-10T09:00:00Z",
+      "source": "identity",
+      "action": "mfa_push",
+      "outcome": "denied",
+      "user": "priya.nair@example.test",
+      "details": {"ip": "198.51.100.91"}
+    },
+    {
+      "id": "C402",
+      "timestamp": "2026-10-10T09:01:00Z",
+      "source": "identity",
+      "action": "mfa_push",
+      "outcome": "denied",
+      "user": "priya.nair@example.test",
+      "details": {"ip": "198.51.100.91"}
+    },
+    {
+      "id": "C403",
+      "timestamp": "2026-10-10T09:04:40Z",
+      "source": "identity",
+      "action": "mfa_push",
+      "outcome": "denied",
+      "user": "priya.nair@example.test",
+      "details": {"ip": "198.51.100.91"}
+    },
+    {
+      "id": "C404",
+      "timestamp": "2026-10-10T09:04:59Z",
+      "source": "identity",
+      "action": "mfa_push",
+      "outcome": "approved",
+      "user": "priya.nair@example.test",
+      "details": {"ip": "198.51.100.91"}
+    },
+    {
+      "id": "C405",
+      "timestamp": "2026-10-10T09:14:58Z",
+      "source": "audit",
+      "action": "role_granted",
+      "outcome": "success",
+      "user": "priya.nair@example.test",
+      "details": {
+        "ip": "198.51.100.91",
+        "role": "SecurityAdministrator",
+        "target": "priya.nair@example.test"
+      }
+    }
+  ]
+}

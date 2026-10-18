@@ -1,0 +1,59 @@
+
+{
+  "case_id": "CASE-005",
+  "title": "MFA denials with role grant from a different source IP",
+  "subject": "sara.khan@example.test",
+  "label": "benign",
+  "scenario": "Multiple MFA prompts occur on one IP, while a separate authenticated administrative workflow changes a role from another IP.",
+  "events": [
+    {
+      "id": "C501",
+      "timestamp": "2026-10-10T11:00:00Z",
+      "source": "identity",
+      "action": "mfa_push",
+      "outcome": "denied",
+      "user": "sara.khan@example.test",
+      "details": {"ip": "203.0.113.110"}
+    },
+    {
+      "id": "C502",
+      "timestamp": "2026-10-10T11:00:20Z",
+      "source": "identity",
+      "action": "mfa_push",
+      "outcome": "denied",
+      "user": "sara.khan@example.test",
+      "details": {"ip": "203.0.113.110"}
+    },
+    {
+      "id": "C503",
+      "timestamp": "2026-10-10T11:00:40Z",
+      "source": "identity",
+      "action": "mfa_push",
+      "outcome": "denied",
+      "user": "sara.khan@example.test",
+      "details": {"ip": "203.0.113.110"}
+    },
+    {
+      "id": "C504",
+      "timestamp": "2026-10-10T11:01:00Z",
+      "source": "identity",
+      "action": "mfa_push",
+      "outcome": "approved",
+      "user": "sara.khan@example.test",
+      "details": {"ip": "203.0.113.110"}
+    },
+    {
+      "id": "C505",
+      "timestamp": "2026-10-10T11:04:00Z",
+      "source": "audit",
+      "action": "role_granted",
+      "outcome": "success",
+      "user": "sara.khan@example.test",
+      "details": {
+        "ip": "198.51.100.110",
+        "role": "SecurityAdministrator",
+        "target": "sara.khan@example.test"
+      }
+    }
+  ]
+}

@@ -1,0 +1,68 @@
+
+{
+  "case_id": "CASE-003",
+  "title": "Repeated MFA denials followed by Global Administrator grant",
+  "subject": "jordan.lee@example.test",
+  "label": "suspicious",
+  "scenario": "An unfamiliar browser repeatedly triggers MFA prompts, gains approval, and is followed by a privileged role grant.",
+  "events": [
+    {
+      "id": "C301",
+      "timestamp": "2026-10-10T08:00:00Z",
+      "source": "identity",
+      "action": "login",
+      "outcome": "password_accepted",
+      "user": "jordan.lee@example.test",
+      "details": {"ip": "203.0.113.81", "device": "unknown-browser"}
+    },
+    {
+      "id": "C302",
+      "timestamp": "2026-10-10T08:01:00Z",
+      "source": "identity",
+      "action": "mfa_push",
+      "outcome": "denied",
+      "user": "jordan.lee@example.test",
+      "details": {"ip": "203.0.113.81"}
+    },
+    {
+      "id": "C303",
+      "timestamp": "2026-10-10T08:01:30Z",
+      "source": "identity",
+      "action": "mfa_push",
+      "outcome": "denied",
+      "user": "jordan.lee@example.test",
+      "details": {"ip": "203.0.113.81"}
+    },
+    {
+      "id": "C304",
+      "timestamp": "2026-10-10T08:02:00Z",
+      "source": "identity",
+      "action": "mfa_push",
+      "outcome": "denied",
+      "user": "jordan.lee@example.test",
+      "details": {"ip": "203.0.113.81"}
+    },
+    {
+      "id": "C305",
+      "timestamp": "2026-10-10T08:02:15Z",
+      "source": "identity",
+      "action": "mfa_push",
+      "outcome": "approved",
+      "user": "jordan.lee@example.test",
+      "details": {"ip": "203.0.113.81"}
+    },
+    {
+      "id": "C306",
+      "timestamp": "2026-10-10T08:05:00Z",
+      "source": "audit",
+      "action": "role_granted",
+      "outcome": "success",
+      "user": "jordan.lee@example.test",
+      "details": {
+        "ip": "203.0.113.81",
+        "role": "GlobalAdministrator",
+        "target": "jordan.lee@example.test"
+      }
+    }
+  ]
+}

@@ -1,0 +1,59 @@
+
+{
+  "case_id": "CASE-006",
+  "title": "MFA sequence followed by a delayed administrative grant",
+  "subject": "dev.mehra@example.test",
+  "label": "benign",
+  "scenario": "MFA prompts are eventually approved, but the privileged role grant occurs well outside the detection correlation window.",
+  "events": [
+    {
+      "id": "C601",
+      "timestamp": "2026-10-10T12:00:00Z",
+      "source": "identity",
+      "action": "mfa_push",
+      "outcome": "denied",
+      "user": "dev.mehra@example.test",
+      "details": {"ip": "198.51.100.120"}
+    },
+    {
+      "id": "C602",
+      "timestamp": "2026-10-10T12:00:20Z",
+      "source": "identity",
+      "action": "mfa_push",
+      "outcome": "denied",
+      "user": "dev.mehra@example.test",
+      "details": {"ip": "198.51.100.120"}
+    },
+    {
+      "id": "C603",
+      "timestamp": "2026-10-10T12:00:40Z",
+      "source": "identity",
+      "action": "mfa_push",
+      "outcome": "denied",
+      "user": "dev.mehra@example.test",
+      "details": {"ip": "198.51.100.120"}
+    },
+    {
+      "id": "C604",
+      "timestamp": "2026-10-10T12:01:00Z",
+      "source": "identity",
+      "action": "mfa_push",
+      "outcome": "approved",
+      "user": "dev.mehra@example.test",
+      "details": {"ip": "198.51.100.120"}
+    },
+    {
+      "id": "C605",
+      "timestamp": "2026-10-10T12:16:00Z",
+      "source": "audit",
+      "action": "role_granted",
+      "outcome": "success",
+      "user": "dev.mehra@example.test",
+      "details": {
+        "ip": "198.51.100.120",
+        "role": "GlobalAdministrator",
+        "target": "dev.mehra@example.test"
+      }
+    }
+  ]
+}

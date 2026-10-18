@@ -114,7 +114,7 @@ class APITests(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
             {case["case_id"] for case in response.json()},
-            {"CASE-001", "CASE-002"},
+            {"CASE-001", "CASE-002","CASE-003","CASE-004","CASE-005","CASE-006",},
         )
 
     def test_returns_case_evidence(self):
