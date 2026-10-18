@@ -4,7 +4,7 @@
 import os
 from pathlib import Path
 from typing import Callable, Literal
-
+from .narrative_api import create_narrative_router
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, ConfigDict
 from .report_builder import build_incident_report
@@ -174,6 +174,9 @@ def create_app(
 
     application.include_router(
         create_review_router(db_path)
+    )
+    application.include_router(
+    create_narrative_router(db_path)
     )
 
     return application
