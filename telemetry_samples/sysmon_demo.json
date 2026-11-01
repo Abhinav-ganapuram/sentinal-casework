@@ -1,0 +1,41 @@
+
+[
+  {
+    "EventID": 1,
+    "Computer": "LAB-WIN11",
+    "EventData": {
+      "UtcTime": "2026-10-20T10:00:00Z",
+      "User": "LAB\\analyst",
+      "Image": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+      "CommandLine": "powershell.exe -NoProfile -Command Get-Process",
+      "ParentImage": "C:\\Windows\\explorer.exe",
+      "ProcessGuid": "{11111111-1111-1111-1111-111111111111}",
+      "ProcessId": "4320"
+    }
+  },
+  {
+    "EventID": 3,
+    "Computer": "LAB-WIN11",
+    "EventData": {
+      "UtcTime": "2026-10-20T10:00:05Z",
+      "User": "LAB\\analyst",
+      "Image": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+      "ProcessGuid": "{11111111-1111-1111-1111-111111111111}",
+      "SourceIp": "192.0.2.10",
+      "DestinationIp": "198.51.100.25",
+      "DestinationPort": "443",
+      "Protocol": "tcp"
+    }
+  },
+  {
+    "EventID": 11,
+    "Computer": "LAB-WIN11",
+    "EventData": {
+      "UtcTime": "2026-10-20T10:00:12Z",
+      "User": "LAB\\analyst",
+      "Image": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+      "ProcessGuid": "{11111111-1111-1111-1111-111111111111}",
+      "TargetFilename": "C:\\Users\\analyst\\Documents\\process-list.txt"
+    }
+  }
+]
