@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import CaseDetail from './CaseDetail'
 import './App.css'
 import PerformanceDashboard from './PerformanceDashboard'
+import TelemetryUpload from './TelemetryUpload'
 
 export default function App() {
   const [cases, setCases] = useState([])
@@ -99,7 +100,7 @@ export default function App() {
           <strong className="mode-label">Scripted demo</strong>
         </div>
       </section>
-
+      <TelemetryUpload onImported={retry} />
       <section className="case-section">
         <div className="section-heading">
           <h2>Case library</h2>
@@ -131,7 +132,10 @@ export default function App() {
 
                 <div className="case-footer">
                   <span>{item.event_count} source events</span>
-                  <span>Synthetic fixture</span>
+                  <span>{item.source_type === 'sysmon_import'
+                          ? 'Imported Sysmon'
+                          : 'Synthetic fixture'}
+                  </span>
                 </div>
 
                 <button
