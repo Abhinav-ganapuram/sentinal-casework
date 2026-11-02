@@ -74,13 +74,17 @@ def validate_investigation_step(
 def run_agent(case: dict, decide, max_steps: int = 3) -> dict:
     """Investigate a case with bounded, validated agent decisions."""
     from .detections import detect_mfa_fatigue_and_privilege_change
+    from .endpoint_detections import detect_endpoint_threats
     from .tool_runner import run_lookup
 
     if not isinstance(max_steps, int) or isinstance(max_steps, bool) or max_steps < 1:
         raise ValueError("max_steps must be a positive integer")
 
     events = case["events"]
-    findings = detect_mfa_fatigue_and_privilege_change(events)
+    findings = (
+    detect_mfa_fatigue_and_privilege_change(events)
+    + detect_endpoint_threats(events)
+    )
     trace = []
     observations = []
 
