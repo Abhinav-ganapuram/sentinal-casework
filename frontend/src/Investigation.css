@@ -239,3 +239,31 @@
 .mode-controls select:disabled {
   opacity: 0.6;
 }
+.attack-techniques {
+  margin: 16px 0;
+  padding: 14px;
+  border: 1px solid #304253;
+  border-radius: 8px;
+  background: #192938;
+}
+
+.attack-techniques h5 {
+  margin: 0 0 10px;
+  color: #9ee8d9;
+  font-size: 14px;
+}
+
+.attack-techniques ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.attack-techniques li {
+  margin: 7px 0;
+  line-height: 1.5;
+}
+
+.attack-techniques a {
+  color: #8cebd7;
+  font-weight: 700;
+}

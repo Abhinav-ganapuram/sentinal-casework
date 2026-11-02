@@ -328,7 +328,38 @@ export default function CaseDetail({ caseId, onClose }) {
                     <h4>{finding.title}</h4>
 
                     <p>{finding.reason}</p>
+                    {(() => {
+                    const techniques = finding.mitre_techniques?.length
+                    ? finding.mitre_techniques
+                    : finding.mitre_attack
+                    ? [finding.mitre_attack]
+                    : []
 
+  return techniques.length > 0 ? (
+    <div className="attack-techniques">
+      <h5>MITRE ATT&CK Techniques</h5>
+
+      <ul>
+        {techniques.map((technique) => (
+          <li key={technique.technique_id}>
+            <a
+              href={`https://attack.mitre.org/techniques/${technique.technique_id.replace('.', '/')}/`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {technique.technique_id}
+            </a>
+            {' — '}
+            {technique.technique}
+            {technique.tactic && (
+              <span> ({technique.tactic})</span>
+            )}
+          </li>
+        ))}
+      </ul>
+    </div>
+  ) : null
+})()}
                     <p className="evidence-reference">
                       Evidence:{' '}
                       {finding.evidence_ids.join(', ')}
