@@ -1,0 +1,30 @@
+
+[
+  {
+    "EventID": 1,
+    "Computer": "LAB-WIN11",
+    "EventData": {
+      "UtcTime": "2026-10-21T10:00:00Z",
+      "User": "LAB\\analyst",
+      "Image": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+      "CommandLine": "powershell.exe -NoProfile -Command Get-Date",
+      "ParentImage": "C:\\Program Files\\Microsoft Office\\root\\Office16\\WINWORD.EXE",
+      "ProcessGuid": "{33333333-3333-3333-3333-333333333333}",
+      "ProcessId": "6200"
+    }
+  },
+  {
+    "EventID": 3,
+    "Computer": "LAB-WIN11",
+    "EventData": {
+      "UtcTime": "2026-10-21T10:00:30Z",
+      "User": "LAB\\analyst",
+      "Image": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+      "ProcessGuid": "{33333333-3333-3333-3333-333333333333}",
+      "SourceIp": "192.0.2.15",
+      "DestinationIp": "198.51.100.45",
+      "DestinationPort": "443",
+      "Protocol": "tcp"
+    }
+  }
+]

@@ -13,7 +13,12 @@ from pydantic import BaseModel, ConfigDict, ValidationError
 class NextAction(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    tool: Literal["get_user_events", "get_ip_events", "finish"]
+    tool: Literal[
+    "get_user_events",
+    "get_ip_events",
+    "get_process_events",
+    "finish",
+    ]
     value: str
     reason: str
 
@@ -28,9 +33,17 @@ You are an AI investigation assistant for synthetic SOC cases.
 Your task is to select the next read-only investigation action.
 
 Available actions:
-1. get_user_events: investigate an exact username from the evidence.
-2. get_ip_events: investigate an exact IP address from the evidence.
-3. finish: stop the investigation and request human review.
+1. get_user_events: retrieve events for an exact username in the case.
+2. get_ip_events: retrieve events for an exact source IP in the case.
+3. get_process_events: retrieve Sysmon events for an exact process GUID
+   supplied in the process_guids context.
+4. finish: conclude investigation of the current finding.
+
+Each request concerns one finding in a possibly multi-finding case.
+Do not repeat lookups within the current finding.
+Use process GUID lookups when useful for endpoint investigation.
+Only use identifiers grounded in the supplied case evidence.
+All investigations require human review.
 
 Rules:
 - Choose exactly one action per response.
@@ -79,6 +92,7 @@ class GeminiDecider:
                         "enum": [
                         "get_user_events",
                         "get_ip_events",
+                        "get_process_events",
                         "finish",
                         ],
                         },
