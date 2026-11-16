@@ -5,6 +5,7 @@ import './Investigation.css'
 import IncidentReport from './IncidentReport'
 import AnalystReview from './AnalystReview'
 import AINarrative from './AINarrative'
+import SOCPlaybooks from './SOCPlaybooks'
 
 export default function CaseDetail({ caseId, onClose }) {
   const [caseData, setCaseData] = useState(null)
@@ -450,6 +451,9 @@ export default function CaseDetail({ caseId, onClose }) {
             </section>
             {result.report && (
               <IncidentReport report={result.report} />
+            )}
+            {result.playbooks?.length > 0 && (
+            <SOCPlaybooks playbooks={result.playbooks} />
             )}
             {result.investigation_id && result.report && (
             <AINarrative

@@ -1,0 +1,136 @@
+
+.soc-playbooks {
+  margin-top: 28px;
+  padding: 24px;
+  background: #111d29;
+  color: #e8eef5;
+  border: 1px solid #304253;
+  border-radius: 14px;
+}
+
+.soc-playbooks-header h3 {
+  margin: 8px 0;
+  font-size: 22px;
+}
+
+.soc-playbooks-header > p:last-child {
+  color: #aebed0;
+  line-height: 1.6;
+}
+
+.soc-playbooks-eyebrow {
+  color: #8cebd7;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.4px;
+}
+
+.soc-playbook {
+  background: #192938;
+  border: 1px solid #344a5f;
+  border-radius: 10px;
+  padding: 20px;
+  margin-top: 20px;
+}
+
+.soc-playbook-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.soc-playbook-heading h4 {
+  font-size: 17px;
+  margin: 0;
+}
+
+.soc-playbook-heading span {
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 6px;
+}
+
+.soc-status-complete {
+  background: #284a46;
+  color: #9ee8d9;
+}
+
+.soc-status-incomplete {
+  background: #4f392a;
+  color: #ffd1a6;
+}
+
+.soc-playbook-subtitle {
+  font-size: 13px;
+  color: #aebed0;
+  margin-top: 12px;
+}
+
+.soc-playbook h5 {
+  color: #9ee8d9;
+  font-size: 14px;
+  margin: 24px 0 12px;
+}
+
+.soc-playbook-checks {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.soc-playbook-checks li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid #33485b;
+  border-radius: 8px;
+}
+
+.soc-playbook-checks strong {
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.soc-playbook-checks code {
+  overflow-wrap: anywhere;
+}
+
+.soc-playbook-actions {
+  padding-left: 22px;
+}
+
+.soc-playbook-actions li {
+  margin-bottom: 9px;
+  line-height: 1.6;
+}
+
+.soc-playbook-caution {
+  margin-top: 24px;
+  padding-top: 14px;
+  border-top: 1px solid #344a5f;
+  color: #9ee8d9;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+@media (max-width: 800px) {
+  .soc-playbooks {
+    padding: 16px;
+  }
+
+  .soc-playbook {
+    padding: 14px;
+  }
+
+  .soc-playbook-checks li {
+    flex-wrap: wrap;
+  }
+}

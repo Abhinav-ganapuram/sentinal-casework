@@ -23,6 +23,7 @@ from .metrics import run_measured_investigation
 from .metrics_api import create_metrics_router
 from .narrative_api import create_narrative_router
 from .report_builder import build_incident_report
+from .playbooks import build_playbooks
 from .review_api import create_review_router
 from .storage import (
     DEFAULT_DB_PATH,
@@ -239,13 +240,18 @@ def create_app(
                 ),
             ) from error
 
-        # Record which investigation mode was used.
         result["execution_mode"] = selected_mode
 
-        # Generate an evidence-backed incident report.
+        # Build deterministic SOC playbooks for each detection finding.
+        result["playbooks"] = build_playbooks(
+        case,
+        result,
+)
+
+# Generate the evidence-backed incident report.
         result["report"] = build_incident_report(
-            case,
-            result,
+        case,
+        result,
         )
 
         # Persist investigation, report, and performance metrics.
