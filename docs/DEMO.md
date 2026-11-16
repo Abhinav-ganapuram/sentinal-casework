@@ -1,141 +1,135 @@
 
-# Sentinel Casework — Interview Demonstration
+# Sentinel Casework — Five-Minute Technical Demo
 
 ## Objective
 
-Demonstrate an evidence-first SOC investigation, including
-detection engineering, AI-assisted investigation, validated reports,
-human review, and evaluation.
+Show how Sentinel correlates identity and endpoint telemetry,
+investigates findings with bounded read-only tools, validates
+evidence, and supports human review.
 
-Target walkthrough: approximately 7–10 minutes.
+Demo mode is preferred. No Gemini API key is required.
 
-## 1. Introduce the problem
+## Before the demo
 
-SOC analysts investigate multiple alerts across identity and audit
-systems. Events need to be correlated, evidence must remain
-traceable, and investigation outcomes must be reviewed.
+From the project root, start FastAPI:
 
-Sentinel explores how bounded AI tool selection can assist this
-workflow without giving an AI agent autonomous response authority.
+```powershell
+python -m uvicorn sentinel_casework.api:app --reload --port 8000
+```
 
-## 2. Demonstrate detection
+From a second terminal:
+
+```powershell
+cd frontend
+npm run dev
+```
+
+Open http://localhost:5173.
+
+Make sure the following fixtures are available:
+
+- telemetry_samples/sysmon_suspicious_powershell.json
+- telemetry_samples/sysmon_office_powershell.json
+
+## 0:00–0:45 — Explain the problem
+
+SOC analysts need to correlate events, investigate suspicious
+activity, and produce trustworthy incident evidence.
+
+Sentinel demonstrates a local-first workflow combining
+detection engineering, AI-assisted decisions, and human oversight.
+
+## 0:45–1:30 — Demonstrate an identity finding
 
 Open CASE-001.
 
-Show the sequence:
+Show the MFA denial sequence, subsequent approval, and
+privileged role grant.
 
-- Repeated MFA denials
-- Successful MFA approval
-- Privileged role assignment
-- Detection finding referencing actual event IDs
+Explain how DET-001 uses user, IP, and timing correlation,
+rather than searching for isolated suspicious keywords.
 
-Explain the role of temporal correlation and shared user/IP context.
+Run a Demo investigation.
 
-## 3. Demonstrate automated investigation
+## 1:30–2:30 — Demonstrate endpoint investigation
 
-Select Demo mode.
+Import sysmon_office_powershell.json.
 
-Run the investigation and show:
+Run a new Demo investigation.
 
-- Individual tool requests
-- Returned events
-- Decision trace
-- Investigation status
+Show:
 
-Explain why investigation tools are read-only and validated.
+- DET-003: Office-spawned PowerShell with network activity
+- MITRE ATT&CK technique mapping
+- Source evidence IDs
+- Correlated process creation and network connection
+- Investigation tool trace
 
-## 4. Demonstrate AI functionality
+Explain that process GUID correlation is stronger than matching
+only a username or a PowerShell executable name.
 
-If Gemini access is available, select Gemini mode on a new run.
+## 2:30–3:15 — Show playbooks and human oversight
 
-Explain that Gemini selects the next bounded lookup and receives
-the observations returned by Python.
+Open the SOC investigation playbook.
 
-Explain that Gemini does not directly query a database or perform
-account containment.
+Explain the difference between:
 
-If Gemini is unavailable, show a previously saved Gemini
-investigation and explain the same workflow.
+- Required source evidence
+- Lookups actually performed
+- Recommended analyst follow-up
+- Context not independently verified
 
-## 5. Show evidence-grounded reports
+Show that the system doesn't automatically perform containment.
 
-Open the deterministic incident report.
+## 3:15–4:00 — Demonstrate persistence and reporting
 
-Highlight:
+Open the incident report and evidence timeline.
 
-- Event IDs
-- Chronological evidence timeline
-- Detection summary
-- Uncertainty and limitations
-- Recommended analyst investigation actions
+Reopen the saved investigation from history.
 
-Explain that the report builder rejects non-existent evidence IDs.
+Explain that findings, tool decisions, analyst reviews, and
+AI-generated narratives serve different purposes.
 
-## 6. Show AI narrative
+## 4:00–4:40 — Show engineering quality
 
-Open a saved AI narrative or generate one if available.
+From the project root run:
 
-Highlight:
+```powershell
+python -m unittest discover -s tests -v
+python -m sentinel_casework.evaluate
+python -m sentinel_casework.endpoint_evaluation
+```
 
-- Executive summary
-- Evidence-cited observations
-- Potential security implications
-- Missing evidence and uncertainty
-- Recommended next steps
+Show the GitHub Actions workflow.
 
-Explain that citation existence is checked, but full factual
-correctness still requires analyst review.
+Explain that the evaluations use synthetic labeled fixtures,
+so their metrics are regression-test results rather than
+estimates of production detection performance.
 
-## 7. Demonstrate human review
+## 4:40–5:00 — Explain tradeoffs
 
-Submit an analyst verdict and notes.
+Highlight the security boundaries:
 
-Reopen the saved investigation and show that the review persists
-without modifying the original investigation result.
+- Evidence-grounded read-only lookups
+- Bounded agent execution
+- Human review
+- No automatic containment
+- No production authentication or RBAC
 
-Explain why human verdicts and AI outputs are separate records.
+## Optional extended demo
 
-## 8. Demonstrate evaluation
+Import a combined Sysmon sample containing both DET-002 and
+DET-003 behavior.
 
-Run:
+Show that both findings can be investigated independently and
+retain their own tool traces and playbook requirements.
 
-    python -m sentinel_casework.evaluate
+If Gemini is configured, demonstrate a separate Gemini run.
+Do not depend on live model access for the primary demo.
 
-Show the confusion matrix, precision, recall, and F1 score.
+## Interview closing statement
 
-Explain the difference between a regression test dataset and an
-independent production evaluation dataset.
-
-## 9. Demonstrate performance metrics
-
-Open the performance dashboard.
-
-Compare:
-
-- Demo and Gemini execution modes
-- Investigation duration
-- Decision-provider duration
-- Number of decisions
-- Number of tool lookups
-
-Explain the latency cost of sequential model calls.
-
-## 10. Discuss limitations and next steps
-
-Acknowledge:
-
-- Synthetic telemetry only
-- Limited detection coverage
-- No authenticated analyst identities
-- No automated containment
-- Need for broader evaluation datasets
-- Need for production security hardening
-
-## Closing statement
-
-Sentinel Casework combines detection engineering, evidence validation,
-AI-assisted tool orchestration, persistent investigation history,
-human review, and measurable evaluation.
-
-Its central design choice is keeping AI useful without treating
-AI-generated decisions as verified security facts.
+"Sentinel Casework demonstrates how I approach security
+automation: deterministic detection, evidence-grounded
+investigation, restricted AI tool use, automated regression
+testing, and human-controlled incident decisions."

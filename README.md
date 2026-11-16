@@ -14,6 +14,12 @@ incident reporting, analyst reviews, and performance evaluation.
 **Scope:** Local portfolio prototype using synthetic security events.
 It is not a production SIEM, SOAR platform, or autonomous response tool.
 
+## Project documentation
+
+- [Security architecture and trust boundaries](docs/SECURITY_ARCHITECTURE.md)
+- [Five-minute technical demonstration](docs/DEMO.md)
+- [Automated CI checks](.github/workflows/ci.yml)
+
 ## Key capabilities
 
 | Capability | Implementation |
@@ -30,7 +36,13 @@ It is not a production SIEM, SOAR platform, or autonomous response tool.
 | Investigation history | SQLite-backed investigation records |
 | Performance analytics | Duration, model decisions, tool lookups |
 | Detection evaluation | Confusion matrix, precision, recall and F1 |
-| Dashboard | React and Vite |
+| Dashboard | React and Vite || Sysmon telemetry | Persistent JSON/JSONL imports with normalized endpoint events |
+| Endpoint detection | Encoded PowerShell and Office-to-PowerShell process correlation |
+| Multi-finding investigation | Independent investigation contexts and bounded lookups per finding |
+| Process-GUID lookup | Read-only correlation of Sysmon process activity |
+| MITRE ATT&CK | Detection technique mapping displayed in the dashboard |
+| SOC playbooks | Evidence checks, lookup coverage, and analyst follow-up guidance |
+| Endpoint evaluation | Synthetic positive/negative scenarios with per-rule metrics |
 
 ## Architecture
 
@@ -190,7 +202,8 @@ Evaluate the detection engine:
 ```bash
 python -m sentinel_casework.evaluate
 ```
-
+# Evaluate DET-002 and DET-003 on synthetic Sysmon scenarios
+python -m sentinel_casework.endpoint_evaluation
 Build the frontend:
 
 ```bash

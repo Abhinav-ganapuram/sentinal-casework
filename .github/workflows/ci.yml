@@ -8,16 +8,20 @@ on:
     branches: [main]
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   backend-tests:
-    name: Python tests and detection evaluation
+    name: Python tests and detection evaluations
     runs-on: ubuntu-latest
+    timeout-minutes: 15
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install Python
+      - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.10"
@@ -28,22 +32,30 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install -r requirements.txt
 
-      - name: Run unit tests
+      - name: Run complete Python test suite
         run: python -m unittest discover -s tests -v
 
-      - name: Evaluate synthetic scenarios
+      - name: Evaluate identity scenarios
         run: python -m sentinel_casework.evaluate
 
-      - name: Upload evaluation results
+      - name: Evaluate endpoint scenarios
+        run: python -m sentinel_casework.endpoint_evaluation
+
+      - name: Upload evaluation reports
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: sentinel-evaluation
-          path: data/evaluation.json
-          if-no-files-found: error
+          name: detection-evaluation-reports
+          path: |
+            data/evaluation.json
+            data/endpoint_evaluation.json
+          if-no-files-found: warn
+          retention-days: 14
 
   frontend-build:
     name: React production build
     runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     defaults:
       run:
@@ -53,13 +65,15 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install Node.js
+      - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "22"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
 
-      - name: Install frontend dependencies
-        run: npm install
+      - name: Install locked dependencies
+        run: npm ci
 
-      - name: Build frontend
+      - name: Build React
         run: npm run build
